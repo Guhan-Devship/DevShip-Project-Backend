@@ -13,6 +13,12 @@ module.exports = function (app, io) {
   try {
     var admin = require('../routes/admin')(app, io);
     var client = require('../routes/client')(app, io);
+    var category = require('../routes/category/category')(app, io);
+    var product = require('../routes/product/product')(app, io);
+    var cart = require('../routes/cart/cart.js')(app, io);
+    var billingAdrress = require('../routes/address/billingAddress')(app, io);
+    var shippingAdrress = require('../routes/address/shippingAddress')(app, io);
+    var order = require('../routes/order/order')(app, io);
 
     app.get('/', function (req, res) {
       res.sendFile(path.join(__dirname, '../public/index.html'));

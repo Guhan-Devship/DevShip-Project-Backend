@@ -607,7 +607,7 @@ var update_user_wallet_cancel_cashback = async (data) => {
 };
 
 function jwtSign(payload, callback) {
-  jwt.sign(payload, CONFIG.SECRET_KEY, { expiresIn: '5d' }, (error, token) => {
+  jwt.sign(payload, CONFIG.SECRET_KEY, { expiresIn: '2hr' }, (error, token) => {
     callback(error, token);
   });
 }

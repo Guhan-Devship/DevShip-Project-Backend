@@ -7,7 +7,10 @@ var jwt = require('jsonwebtoken');
 var library = require('../../model/library.js');
 var mongoose = require('mongoose');
 const { GetOneDocument } = require('../../controller/db_adaptor/mongodb.js');
-const { ensureAuthorizedClient } = require('../../model/security/ensureAuthorised');
+const {
+  ensureAuthorizedClient,
+  ensureAuthorizedAdmin,
+} = require('../../model/security/ensureAuthorised');
 
 var isObjectId = (n) => {
   return mongoose.Types.ObjectId.isValid(n);
@@ -16,7 +19,11 @@ var isObjectId = (n) => {
 module.exports = (app, io) => {
   try {
     var client = require('../../controller/client/client.js')(app, io);
-
+    app.get('/all/user', ensureAuthorizedClient, client.getAllUser);
+    app.delete('/deleteUser/:id', client.deleteUser);
+    app.get('/getUser/:id', client.getUserbyId);
+    app.put('/updateUser/:id', client.updateUser);
+    app.put('/updateAddress/:id', client.UpdateUserBillingAddress);
     app.post(
       '/login',
       [
@@ -68,7 +75,7 @@ module.exports = (app, io) => {
       '/change/password',
       [
         check('email', library.capitalize('email is required')).isEmail(),
-        check('new_password', library.capitalize('invalid new password')).isLength({
+        check('password', library.capitalize('invalid new password')).isLength({
           min: 4,
         }),
       ],

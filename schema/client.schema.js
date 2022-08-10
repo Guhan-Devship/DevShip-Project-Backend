@@ -59,6 +59,7 @@ USER_SCHEMA.USER = {
   password: { type: String, default: '' }, //select: false
   agree_terms: Boolean,
   customer_ID: { type: String, default: '' },
+  isAdmin: { type: Boolean, default: false },
   address: {
     line1: { type: String, default: '' },
     line2: { type: String, default: '' },
@@ -73,29 +74,13 @@ USER_SCHEMA.USER = {
     lat: { type: String, default: '' },
     lng: { type: String, default: '' },
   },
-  billing_address: [
-    {
-      name: { type: String, default: '' },
-      phone: { type: String, default: '' },
-      email: { type: String, default: '' },
-      status: { type: Number, default: 1 },
-      line1: { type: String, default: '' },
-      line2: { type: String, default: '' },
-      state: { type: String, default: '' },
-      city: { type: String, default: '' },
-      country: { type: String, default: '' },
-      postal_code: { type: String, default: '' },
-      formatted_address: { type: String, default: '' }, // Just used to fix the issues for already available client to not clash with this
-      lat: { type: String, default: '' },
-      lng: { type: String, default: '' },
-    },
-  ],
+  billing_address: { type: [String], min: 0, max: 3 },
   shipping_address: [
     {
       name: { type: String, default: '' },
       phone: { type: String, default: '' },
       email: { type: String, default: '' },
-      status: { type: Number, default: 1 },
+      status: { type: Boolean, default: false },
       line1: { type: String, default: '' },
       line2: { type: String, default: '' },
       state: { type: String, default: '' },

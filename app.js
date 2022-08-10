@@ -8,6 +8,8 @@ var express = require('express'),
   CONFIG = require('./config/config'), // Injecting Our Configuration
   helmet = require('helmet'),
   compression = require('compression');
+path = require('path');
+cors = require('cors');
 /** /Dependency Injection end */
 
 var app = express(); // Initializing ExpressJS
@@ -28,6 +30,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 1;
 
 app.use(express.urlencoded({ limit: '100mb', extended: true })); // Parse application/x-www-form-urlencoded
 app.use(express.json({ limit: '100mb' }));
+app.use(cors());
 app.use(cookieParser('Careagencymedia')); // cookieParser - Initializing/Configuration cookie: {maxAge: 8000},
 app.use(session({ secret: 'Careagencymedia', resave: true, saveUninitialized: true })); // express-session - Initializing/Configuration
 app.use(passport.initialize()); // passport - Initializing

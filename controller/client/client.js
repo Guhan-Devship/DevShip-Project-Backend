@@ -19,9 +19,11 @@ const {
   GetAggregation,
   InsertDocument,
   GetDocument,
+  DeleteOneDocument,
 } = require('../../controller/db_adaptor/mongodb.js');
 
 const { promisify } = require('util');
+const send = require('../../model/mail.js');
 const unlinkAsync = promisify(fs.unlink);
 
 const pdfoptions = {
@@ -35,6 +37,66 @@ module.exports = (app, io) => {
 
   var router = {};
 
+  //get all user data
+  router.getAllUser = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let allUser = await GetDocument('client', {}, {}, {});
+      if (allUser) {
+        res.send(allUser);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //Delete user data
+  router.deleteUser = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let remove = await DeleteOneDocument('client', { _id: req.params.id });
+      if (remove) {
+        res.json({ message: 'Deleted' });
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
+  //get user by Id
+  router.getUserbyId = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let getOne = await GetOneDocument('client', { _id: req.params.id }, {}, {});
+      if (getOne) {
+        res.json(getOne);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //update
+  router.updateUser = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let update = await UpdateOneDocument('client', { _id: req.params.id }, { $set: req.body });
+      if (update) {
+        res.json({ message: 'Updated' });
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
   router.login = async (req, res) => {
     var data = {};
     let errors = validationResult(req);
@@ -94,6 +156,8 @@ module.exports = (app, io) => {
                     authToken: authToken,
                     profileCompleted: completedPercentage,
                     message: 'Login Successfully',
+                    admin: user.isAdmin,
+                    id: user._id,
                   };
                   res.json(data);
                 }
@@ -224,7 +288,7 @@ module.exports = (app, io) => {
       return res.json({ status: 0, message: 'Password not match' });
     }
 
-    let insert = await db.InsertDocument('client', user);
+    let insert = await InsertDocument('client', user);
 
     if (insert && insert._id) {
       //   const messageUser = `You have successfully signed up to Kingdom Granites`;
@@ -260,8 +324,8 @@ module.exports = (app, io) => {
       return res.status(422).json({ errors: errors.errors[0].msg });
     }
     try {
-      let settings = await db.GetOneDocument('settings', { alias: 'general' }, {}, {});
-      if (settings) {
+      // let settings = await db.GetOneDocument('settings', { alias: 'general' }, {}, {});
+      if (errors.isEmpty()) {
         let user = await db.GetOneDocument('client', { email: req.body.email }, {}, {});
         if (user && typeof user._id != 'undefined') {
           if (user.new_user == 1) {
@@ -273,7 +337,6 @@ module.exports = (app, io) => {
               _id: { $eq: ObjectId(user._id) },
             };
             var uniqueID = library.randomString(8, '#');
-
             let obj = {};
             obj.otp = Math.floor(1000 + Math.random() * 9000); /* 6 digits */
             obj.otp_timestamp = Date.now() + 360000;
@@ -287,46 +350,47 @@ module.exports = (app, io) => {
               data.message = library.capitalize('update error');
               res.json(data);
             } else {
-              const template = await GetOneDocument(
-                'emailtemplate',
-                { slug: 'client-request-otp' },
-                {},
-                {}
-              );
-
-              if (!template) {
-                const text = `Hello , You are receiving this email because we received a password reset request from your account
-				  OTP : ${obj.otp}
-				  `;
-
-                var mailOptions = {
-                  from: 'care agency media' + ' <' + 'hello@careagencymedia.co.uk' + '>',
-                  to: user.email,
-                  subject: 'OTP request from Care Agency Media',
-                  text: text,
-                };
-                mail.send(mailOptions, function (err, response, mode) {});
-              } else {
-                let { html, subject } = mail.replaceSubAndFooterVars({
-                  templateData: template,
-                  clientData: user,
-                  settingsData: settings,
-                  defaultSubject: `OTP request from Care Agency Media`,
-                });
-
-                subject = subject.replace(/{request.otp}/g, obj.otp);
-                html = html.replace(/{request.otp}/g, obj.otp);
-
-                const mailOptions = {
-                  from: `Care Agency Media  <${settings.email}>`,
-                  to: user.email,
-                  subject,
-                  html,
-                };
-
-                mail.send(mailOptions, function (err, response, mode) {});
-              }
-
+              // const template = await GetOneDocument(
+              //   'emailtemplate',
+              //   { slug: 'client-request-otp' },
+              //   {},
+              //   {}
+              // );
+              const text = `Hello , You are receiving this email because we received a password reset request from your account
+              OTP : ${obj.otp}`;
+              // send(user.email, 'Otp', text);
+              console.log(user.email, obj.otp);
+              // const email = _.get(req.body,'email')
+              // const template = await client.findOne({email : email})
+              // console.log(template)
+              // if (template === user.email) {
+              // var mailOptions = {
+              //   // from: 'care agency media' + ' <' + 'hello@careagencymedia.co.uk' + '>',
+              //   from : "praveenstark77@gmail.com",
+              //   to: user.email,
+              //   subject: 'OTP request from Care Agency Media',
+              //   text: text,
+              // };
+              // mail.send(mailOptions, function (err, response, mode) {})
+              //  mail.send(mailOptions);
+              // } else {
+              // let { html, subject } = mail.replaceSubAndFooterVars({
+              //   templateData: template,
+              //   clientData: user,
+              //   // settingsData: settings,
+              //   defaultSubject: `OTP request from Care Agency Media`,
+              // });
+              // subject = subject.replace(/{request.otp}/g, obj.otp);
+              // html = html.replace(/{request.otp}/g, obj.otp);
+              // const mailOptions = {
+              //   from: `Care Agency Media  <${settings.email}>`,
+              //   to: user.email,
+              //   subject,
+              //   html,
+              // };
+              // mail.send(mailOptions, function (err, response, mode) {});
+              //   res.json("invalid email")
+              // }
               // mailcontent.sendmail(mailData, function (err, response) {});
               data.status = 1;
               data.response = 'Link Sent to mail Successfully!';
@@ -604,6 +668,52 @@ module.exports = (app, io) => {
       data.status = 0;
       data.message = library.capitalize('server error');
       res.send(data);
+    }
+  };
+
+  router.UpdateUserBillingAddress = async (req, res) => {
+    var data = {};
+    data.status = 0;
+
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.errors[0].msg });
+    }
+    try {
+      const name = _.get(req.body, 'name', '');
+      const phone = _.get(req.body, 'phone', '');
+      const email = _.get(req.body, 'email', '');
+      const line1 = _.get(req.body, 'line1', '');
+      const line2 = _.get(req.body, 'line2', '');
+      const state = _.get(req.body, 'state', '');
+      const city = _.get(req.body, 'city', '');
+      const country = _.get(req.body, 'country', '');
+      const postal_code = _.get(req.body, 'postal_code', 0);
+
+      const client_billing_address = {
+        name,
+        phone,
+        email,
+        line1,
+        line2,
+        state,
+        city,
+        country,
+        postal_code,
+      };
+      let update = await UpdateOneDocument(
+        'client',
+        { id: req.params.id },
+        { billing_address: { client_billing_address } },
+        {}
+      );
+      if (update) {
+        res.json({ message: 'Updated' });
+      } else {
+        res.json({ message: 'something wrong' });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
