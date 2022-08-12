@@ -18,6 +18,12 @@ const GetDocument = (collection, query, projection, extension) => {
     if (extension.select) {
       qry.select(extension.select);
     }
+    if (extension.where) {
+      qry.where(extension.where);
+    }
+    if (extension.in) {
+      qry.in(extension.in);
+    }
     qry.exec((err, result) => {
       if (err) {
         reject(err);
