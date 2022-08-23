@@ -158,6 +158,7 @@ module.exports = (app, io) => {
                     message: 'Login Successfully',
                     admin: user.isAdmin,
                     id: user._id,
+                    name: user.first_name,
                   };
                   res.json(data);
                 }

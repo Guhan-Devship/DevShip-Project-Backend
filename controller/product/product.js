@@ -215,7 +215,6 @@ module.exports = (app, io) => {
   };
 
   router.AggregationProduct = async (req, res) => {
-    console.log(req.body);
     try {
       let skip = _.get(req.body, 'skip', 0),
         limit = _.get(req.body, 'limit', 25),
@@ -229,7 +228,7 @@ module.exports = (app, io) => {
       if (field) {
         sort = { offerPrice: 1 };
       } else {
-        sort = { offerPrice: -1 };
+        sort = { createdAt: -1 };
       }
 
       let query = [];

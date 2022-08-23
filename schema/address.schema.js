@@ -1,18 +1,15 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var BILLING_ADDRESS_SCHEMA = {};
-BILLING_ADDRESS_SCHEMA.BILLING = {
-  name: { type: String },
-  email: { type: String },
-  phone: { type: String },
+var ADDRESS_SCHEMA = {};
+ADDRESS_SCHEMA.ADDRESS = {
   line1: { type: String },
   line2: { type: String },
   city: { type: String },
   state: { type: String },
   country: { type: String },
   pincode: { type: String },
-  billingAddress: { type: Boolean, default: false },
+  address: { type: Boolean, default: false },
   createdby: { type: mongoose.Schema.Types.ObjectId },
 };
 
-module.exports = BILLING_ADDRESS_SCHEMA;
+module.exports = ADDRESS_SCHEMA;

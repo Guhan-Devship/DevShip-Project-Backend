@@ -9,6 +9,8 @@ var config_cart_schema = require('../schema/cart.schema.js');
 var config_billing_schema = require('../schema/billing.schema.js');
 var config_shipping_schema = require('../schema/shipping.schema.js');
 var config_order_schema = require('../schema/order.schema');
+var config_contact_schema = require('../schema/contact.schema');
+var config_address_schema = require('../schema/address.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
   timestamps: true,
@@ -43,6 +45,14 @@ var orderSchema = mongoose.Schema(config_order_schema.ORDER, {
   timestamps: true,
   versionKey: false,
 });
+var contactSchema = mongoose.Schema(config_contact_schema.CONTACT, {
+  timestamps: true,
+  versionKey: false,
+});
+var addressSchema = mongoose.Schema(config_address_schema.ADDRESS, {
+  timestamps: true,
+  versionKey: false,
+});
 
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -60,6 +70,8 @@ var cart = mongoose.model('cart', cartSchema, 'cart');
 var billingaddress = mongoose.model('billingaddress', billingSchema, 'billingaddress');
 var shippingaddress = mongoose.model('shippingaddress', shippingSchema, 'shippingaddress');
 var order = mongoose.model('order', orderSchema, 'order');
+var contact = mongoose.model('contact', contactSchema, 'contact');
+var address = mongoose.model('address', addressSchema, 'address');
 
 module.exports = {
   admins: admins,
@@ -70,4 +82,6 @@ module.exports = {
   billingaddress: billingaddress,
   shippingaddress: shippingaddress,
   order: order,
+  contact: contact,
+  address: address,
 };

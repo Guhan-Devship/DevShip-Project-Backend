@@ -7,7 +7,7 @@ const { ensureAuthorizedClient } = require('../../model/security/ensureAuthorise
 module.exports = (app, io) => {
   try {
     var order = require('../../controller/order/order')(app, io);
-    app.post('/new/order', order.createOrder);
+    app.post('/new/order', ensureAuthorizedClient, order.createOrder);
     app.get('/all/order', order.getOrder);
     // app.get('/product/:id', ensureAuthorizedClient, products.getProductbyId);
     app.delete('/deleteOrder/:id', order.deleteOrder);

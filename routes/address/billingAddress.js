@@ -11,7 +11,7 @@ module.exports = (app, io) => {
       io
     );
 
-    app.post('/billingAddress/:id', billingAddress.UserBillingAddress);
+    app.post('/billingAddress/:id', ensureAuthorizedClient, billingAddress.UserBillingAddress);
     app.get('/billingaddress/:id', billingAddress.getBillingAddress);
     // app.get('/allCart', ensureAuthorizedClient, cart.getCart);
     app.delete('/deleteAddress/:id/:userId', billingAddress.deleteBillingAddress);

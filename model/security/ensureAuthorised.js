@@ -50,7 +50,7 @@ const ensureAuthorizedClient = (req, res, next) => {
         res.send(data);
       } else {
         let user = await GetOneDocument('client', { _id: decoded._id, status: 1 }, {}, {});
-        req.userId = decoded.id;
+        req.userId = decoded._id;
 
         if (user === null) {
           const data = {};

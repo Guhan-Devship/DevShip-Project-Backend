@@ -16,27 +16,21 @@ const {
 module.exports = (app, io) => {
   var router = {};
 
-  router.UserBillingAddress = async (req, res) => {
+  router.userAddress = async (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.errors[0].msg });
     }
     try {
-      const name = _.get(req.body, 'name', '');
-      const phone = _.get(req.body, 'phone', '');
-      const email = _.get(req.body, 'email', '');
       const line1 = _.get(req.body, 'line1', '');
       const line2 = _.get(req.body, 'line2', '');
       const state = _.get(req.body, 'state', '');
       const city = _.get(req.body, 'city', '');
       const country = _.get(req.body, 'country', '');
       const pincode = _.get(req.body, 'pincode', '');
-      const createdby = req.params.loginId;
+      const createdby = _.get(req.body, 'createdby', '');
 
-      const client_billing_address = {
-        name,
-        phone,
-        email,
+      const client_address = {
         line1,
         line2,
         state,
@@ -46,16 +40,16 @@ module.exports = (app, io) => {
         createdby,
       };
       console.log(createdby);
-      let insert = await InsertDocument('billingaddress', client_billing_address);
+      let insert = await InsertDocument('address', client_address);
       if (insert) {
         await UpdateOneDocument(
-          'client',
+          'contact',
           { _id: req.params.id },
           {
-            $push: { billing_address: insert._id },
+            $push: { address: insert._id },
           }
         );
-        res.json({ message: 'Updated' });
+        res.json({ message: 'Created' });
       } else {
         res.json({ message: 'something wrong' });
       }
@@ -64,16 +58,17 @@ module.exports = (app, io) => {
     }
   };
 
-  router.getBillingAddress = async (req, res) => {
+  router.getAddress = async (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let user = await GetOneDocument('client', { _id: req.params.id }, {}, {});
+      let user = await GetOneDocument('contact', { _id: req.params.id }, {}, {});
+
       const list = await Promise.all(
-        user.billing_address.map((item) => {
-          return GetOneDocument('billingaddress', { _id: item }, {}, {});
+        user.address.map((item) => {
+          return GetOneDocument('address', { _id: item }, {}, {});
         })
       );
       res.send(list);

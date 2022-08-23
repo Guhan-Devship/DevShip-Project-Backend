@@ -19,6 +19,8 @@ module.exports = function (app, io) {
     var billingAdrress = require('../routes/address/billingAddress')(app, io);
     var shippingAdrress = require('../routes/address/shippingAddress')(app, io);
     var order = require('../routes/order/order')(app, io);
+    var contact = require('../routes/contact/contact')(app, io);
+    var address = require('../routes/address/address')(app, io);
 
     app.get('/', function (req, res) {
       res.sendFile(path.join(__dirname, '../public/index.html'));
