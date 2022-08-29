@@ -21,6 +21,7 @@ module.exports = (app, io) => {
     app.get('/allContact', contact.getContact);
     app.get('/getContact/:id', contact.getContactById);
     app.delete('/deleteContact/:id', contact.deleteContact);
+    app.delete('/deleteContactAddress/:id/:userId', contact.deleteContactAddress);
     app.put('/updateContact/:id', contact.updateContact);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);

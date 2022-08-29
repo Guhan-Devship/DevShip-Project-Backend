@@ -9,7 +9,9 @@ module.exports = (app, io) => {
     var address = require('../../controller/address/address/address')(app, io);
 
     app.post('/address/:id', ensureAuthorizedClient, address.userAddress);
-    app.get('/getAddress/:id', ensureAuthorizedClient, address.getAddress);
+    app.get('/AddressGet/:id', address.getAddress);
+    app.delete('/deleteaddress/:id', ensureAuthorizedClient, address.deleteAddress);
+    app.put('/AddressUpdate/:id', address.updateAddress);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }
