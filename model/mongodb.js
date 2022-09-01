@@ -11,6 +11,9 @@ var config_shipping_schema = require('../schema/shipping.schema.js');
 var config_order_schema = require('../schema/order.schema');
 var config_contact_schema = require('../schema/contact.schema');
 var config_address_schema = require('../schema/address.schema');
+var config_practice_schema = require('../schema/practice.schema');
+var config_salary_schema = require('../Practice/schema/salary.schema');
+var config_mark_schema = require('../Practice/schema/mark.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
   timestamps: true,
@@ -53,6 +56,18 @@ var addressSchema = mongoose.Schema(config_address_schema.ADDRESS, {
   timestamps: true,
   versionKey: false,
 });
+var practiceSchema = mongoose.Schema(config_practice_schema.PRACTICE, {
+  timestamps: true,
+  versionKey: false,
+});
+var salarySchema = mongoose.Schema(config_salary_schema.SALARY, {
+  timestamps: true,
+  versionKey: false,
+});
+var markSchema = mongoose.Schema(config_mark_schema.MARK, {
+  timestamps: true,
+  versionKey: false,
+});
 
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -72,6 +87,9 @@ var shippingaddress = mongoose.model('shippingaddress', shippingSchema, 'shippin
 var order = mongoose.model('order', orderSchema, 'order');
 var contact = mongoose.model('contact', contactSchema, 'contact');
 var address = mongoose.model('address', addressSchema, 'address');
+var practice = mongoose.model('practice', practiceSchema, 'practice');
+var salary = mongoose.model('salary', salarySchema, 'salary');
+var mark = mongoose.model('mark', markSchema, 'mark');
 
 module.exports = {
   admins: admins,
@@ -84,4 +102,7 @@ module.exports = {
   order: order,
   contact: contact,
   address: address,
+  practice: practice,
+  salary: salary,
+  mark: mark,
 };
