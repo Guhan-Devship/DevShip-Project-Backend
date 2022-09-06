@@ -16,6 +16,7 @@ module.exports = (app, io) => {
     app.get('/filter', order.getOrder_filter);
     app.get('/set', order.getOrder_mark);
     app.get('/lookup', order.getOrder_lookup);
+    app.get('/cond', order.getOrder_cond);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }

@@ -288,5 +288,34 @@ module.exports = (app, io) => {
       res.send(error);
     }
   };
+  // Cond
+  router.getOrder_cond = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      // let order = await GetDocument('order', {}, {}, {});
+      let query = [];
+      query.push({
+        $project: {
+          title: 1,
+          offerPrice: 1,
+          quantity: 1,
+          discount: {
+            $cond: { if: { $gte: ['$quantity', 2] }, then: 30, else: 20 },
+          },
+        },
+      });
+
+      let order = await GetAggregation('order', query);
+      if (order) {
+        res.send(order);
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
+
   return router;
 };

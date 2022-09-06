@@ -171,7 +171,7 @@ module.exports = (app, io) => {
           }
         });
       } else {
-        data.response = 'User Not Found';
+        data.response = { message: 'User Not Found' };
         res.json(data);
       }
     } catch (err) {

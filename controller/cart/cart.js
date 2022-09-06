@@ -45,7 +45,7 @@ module.exports = (app, io) => {
     console.log(createdby);
 
     let insert = await InsertDocument('cart', cart);
-    if (insert && insert._id) {
+    if (insert) {
       res.json({ status: 1, message: 'cartList Created' });
     } else {
       res.json({ status: 0, message: 'Failed to create cart' });

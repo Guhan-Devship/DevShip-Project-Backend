@@ -15,6 +15,7 @@ const {
 } = require('../../controller/db_adaptor/mongodb.js');
 const path = require('path');
 const library = require('../../model/library.js');
+const { isObjectId, ObjectId } = require('../../model/common.js');
 
 module.exports = (app, io) => {
   var router = {};
@@ -95,7 +96,7 @@ module.exports = (app, io) => {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let contact = await GetOneDocument('contact', { _id: req.params.id }, {}, {});
+      let contact = await GetOneDocument('contact', { _id: ObjectId(req.params.id) }, {}, {});
       if (contact) {
         res.send(contact);
       }
@@ -110,7 +111,7 @@ module.exports = (app, io) => {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let remove = await DeleteOneDocument('contact', { _id: req.params.id });
+      let remove = await DeleteOneDocument('contact', { _id: ObjectId(req.params.id) });
       if (remove) {
         res.json({ message: 'Deleted' });
       }
@@ -142,7 +143,7 @@ module.exports = (app, io) => {
         message,
         address,
       };
-      let update = await UpdateOneDocument('contact', { _id: req.params.id }, contact);
+      let update = await UpdateOneDocument('contact', { _id: ObjectId(req.params.id) }, contact);
       if (update) {
         res.json({ message: 'Updated' });
       }
@@ -160,7 +161,7 @@ module.exports = (app, io) => {
       let remove = await UpdateOneDocument(
         'contact',
         { _id: userId },
-        { $pull: { address: { _id: req.params.id } } },
+        { $pull: { address: { _id: ObjectId(req.params.id) } } },
         {}
       );
       if (remove) {
