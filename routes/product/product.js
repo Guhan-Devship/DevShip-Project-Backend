@@ -12,6 +12,7 @@ module.exports = (app, io) => {
       middlewares
         .commonUpload(CONFIG.DIRECTORY_USER_PHOTO)
         .fields([{ name: 'image', maxCount: 1 }]),
+      ensureAuthorizedClient,
       products.createProduct
     );
     app.get('/all/product', products.getProduct);
@@ -21,10 +22,11 @@ module.exports = (app, io) => {
       '/updateProduct/:id',
       //   middlewares
       //     .commonUpload(CONFIG.DIRECTORY_USER_PHOTO)
-      //     .fields([{ name: 'image', maxCount: 1 }]),
+      //     .fields([{ name: 'image', maxCount: 1 }])
+      ensureAuthorizedClient,
       products.updateProduct
     );
-    app.get('/category/:id', products.countByCategory);
+    app.get('/category/:id', ensureAuthorizedClient, products.countByCategory);
     app.get('/product', products.productAggregation);
     app.post('/products', products.AggregationProduct);
   } catch (error) {

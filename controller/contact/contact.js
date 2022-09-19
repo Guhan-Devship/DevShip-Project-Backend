@@ -151,6 +151,7 @@ module.exports = (app, io) => {
       res.send(error);
     }
   };
+
   router.deleteContactAddress = async (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {

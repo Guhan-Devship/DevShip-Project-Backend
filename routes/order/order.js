@@ -8,9 +8,9 @@ module.exports = (app, io) => {
   try {
     var order = require('../../controller/order/order')(app, io);
     app.post('/new/order', ensureAuthorizedClient, order.createOrder);
-    app.get('/all/order', order.getOrder);
+    app.get('/all/order', ensureAuthorizedClient, order.getOrder);
     // app.get('/product/:id', ensureAuthorizedClient, products.getProductbyId);
-    app.delete('/deleteOrder/:id', order.deleteOrder);
+    app.delete('/deleteOrder/:id', ensureAuthorizedClient, order.deleteOrder);
     // app.put(
     //   '/updateProduct/:id',
     //   //   middlewares

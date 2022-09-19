@@ -15,6 +15,7 @@ module.exports = (app, io) => {
   var router = {};
 
   router.createCategory = async (req, res) => {
+    console.log(req);
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });

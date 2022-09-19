@@ -14,6 +14,7 @@ var config_address_schema = require('../schema/address.schema');
 var config_practice_schema = require('../schema/practice.schema');
 var config_salary_schema = require('../Practice/schema/salary.schema');
 var config_mark_schema = require('../Practice/schema/mark.schema');
+var config_image_schema = require('../Practice/schema/image.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
   timestamps: true,
@@ -68,6 +69,10 @@ var markSchema = mongoose.Schema(config_mark_schema.MARK, {
   timestamps: true,
   versionKey: false,
 });
+var imageSchema = mongoose.Schema(config_image_schema.IMAGE, {
+  timestamps: true,
+  versionKey: false,
+});
 
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -90,6 +95,7 @@ var address = mongoose.model('address', addressSchema, 'address');
 var practice = mongoose.model('practice', practiceSchema, 'practice');
 var salary = mongoose.model('salary', salarySchema, 'salary');
 var mark = mongoose.model('mark', markSchema, 'mark');
+var multiImage = mongoose.model('multiImage', imageSchema, 'multiImage');
 
 module.exports = {
   admins: admins,
@@ -105,4 +111,5 @@ module.exports = {
   practice: practice,
   salary: salary,
   mark: mark,
+  multiImage: multiImage,
 };
