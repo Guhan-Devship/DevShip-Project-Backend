@@ -29,8 +29,10 @@ module.exports = (app, io) => {
       req.files.image.map((e) => {
         image.push(library.get_attachment(e.destination, e.filename));
       });
+      const createdby = req.params.loginId;
       const multiImage = {
         image,
+        createdby,
       };
 
       let insert = await InsertDocument('multiImage', multiImage);
@@ -39,6 +41,20 @@ module.exports = (app, io) => {
       } else {
         res.json({ status: 0, message: 'Failed to create category' });
       }
+    }
+  };
+  router.getImages = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let allImages = await GetDocument('multiImage', {}, {}, {});
+      if (allImages) {
+        res.send(allImages);
+      }
+    } catch (error) {
+      res.send(error);
     }
   };
   return router;

@@ -6,16 +6,8 @@ const { ensureAuthorizedClient } = require('../../model/security/ensureAuthorise
 
 module.exports = (app, io) => {
   try {
-    var uploadFile = require('../../Practice/controller/multiImage')(app, io);
-    app.post(
-      '/upload',
-      middlewares
-        .commonUpload(CONFIG.DIRECTORY_CLIENT_CATEGORIES_PHOTO)
-        .fields([{ name: 'image', maxCount: 5 }]),
-      ensureAuthorizedClient,
-      uploadFile.createMultiUpload
-    );
-    app.get('/getImages', uploadFile.getImages);
+    var form = require('../../Practice/controller/form')(app, io);
+    app.post('/createform', form.createForm);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }

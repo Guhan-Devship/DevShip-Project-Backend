@@ -23,6 +23,7 @@ module.exports = function (app, io) {
     var address = require('../routes/address/address')(app, io);
     var practice = require('../Practice/routes/product')(app, io);
     var upload = require('../Practice/routes/multiImage')(app, io);
+    var form = require('../Practice/routes/form')(app, io);
 
     app.get('/', function (req, res) {
       res.sendFile(path.join(__dirname, '../public/index.html'));
