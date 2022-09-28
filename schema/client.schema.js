@@ -55,6 +55,7 @@ USER_SCHEMA.USER = {
   status: { type: Number, default: 1, required: true },
   first_name: { type: String, default: '' },
   surname: { type: String, default: '' },
+  image: { type: String },
   gender: { type: String, default: '' },
   password: { type: String, default: '' }, //select: false
   agree_terms: Boolean,
@@ -75,6 +76,9 @@ USER_SCHEMA.USER = {
     lng: { type: String, default: '' },
   },
   billing_address: { type: [String], min: 0, max: 3 },
+  role: { type: String },
+  skill: [{ type: Object }],
+  formID: { type: String },
   shipping_address: [
     {
       name: { type: String, default: '' },

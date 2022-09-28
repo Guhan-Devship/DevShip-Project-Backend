@@ -5,6 +5,8 @@ FORM_SCHEMA.FORM = {
   first_name: { type: String },
   surname: { type: String },
   gender: { type: String },
+  role: { type: String },
+  skill: [{ type: Object }],
   email: { type: String },
   password: { type: String },
   confirmPassword: { type: String },
@@ -14,6 +16,7 @@ FORM_SCHEMA.FORM = {
     code: String,
     dialcountry: String,
   },
+  movedToUser: { type: Boolean, default: false },
   createdby: { type: mongoose.Schema.Types.ObjectId },
 };
 

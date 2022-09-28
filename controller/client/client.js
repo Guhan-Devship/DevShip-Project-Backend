@@ -67,6 +67,47 @@ module.exports = (app, io) => {
       res.send(error);
     }
   };
+  //remove image
+  router.removePhoto = async (req, res) => {
+    var data = {};
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.errors[0].msg });
+    }
+
+    try {
+      let image = _.get(req.body, 'image', '');
+
+      if (image !== '' || image !== null) {
+        let update = await UpdateOneDocument(
+          'client',
+          { _id: ObjectId(req.params.id) },
+          { image: '' },
+          {}
+        );
+        unlinkAsync(image)
+          .then((resolved) => {
+            data.status = 1;
+            data.response = resolved;
+            data.message = library.capitalize('User Photo removed');
+            res.send(data);
+          })
+          .catch((error) => {
+            data.status = 0;
+            data.message = error;
+            res.send(data);
+          });
+      } else {
+        data.status = 0;
+        data.message = library.capitalize('No company logo Directory');
+        return res.send(data);
+      }
+    } catch (err) {
+      data.status = 0;
+      data.message = library.capitalize('server error');
+      res.send(data);
+    }
+  };
   //get user by Id
   router.getUserbyId = async (req, res) => {
     let errors = validationResult(req);
@@ -89,9 +130,48 @@ module.exports = (app, io) => {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let update = await UpdateOneDocument('client', { _id: req.params.id }, { $set: req.body });
+      const image = library.get_attachment(
+        req.files.image[0].destination,
+        req.files.image[0].filename
+      );
+      const first_name = _.get(req.body, 'first_name', '');
+      const surname = _.get(req.body, 'surname', '');
+      const email = _.get(req.body, 'email', '');
+      const phone = _.get(req.body, 'phone', '');
+      const user = {
+        first_name,
+        surname,
+        phone,
+        image,
+        email,
+      };
+      let update = await UpdateOneDocument('client', { _id: req.params.id }, user);
       if (update) {
         res.json({ message: 'Updated' });
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
+  router.revertById = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let movedata = await GetOneDocument('client', { _id: req.params.id }, {}, {});
+      if (movedata) {
+        let data = {
+          _id: movedata.formID,
+        };
+
+        let update = await UpdateOneDocument('form', data, { movedToUser: false }, {});
+        if (update) {
+          let remove = await DeleteOneDocument('client', { _id: req.params.id });
+          if (remove) {
+            res.json({ message: 'Moved to form' });
+          }
+        }
       }
     } catch (error) {
       res.send(error);
@@ -129,10 +209,10 @@ module.exports = (app, io) => {
                   let completedPercentage = 100;
 
                   if (_.isEmpty(user.photo)) {
-                    completedPercentage = completedPercentage - 10;
+                    completedPercentage = completedPercentage - 20;
                   }
 
-                  if (_.isEmpty(user.office_phone)) {
+                  if (_.isEmpty(user.phone)) {
                     completedPercentage = completedPercentage - 10;
                   }
 

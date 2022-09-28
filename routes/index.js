@@ -24,6 +24,8 @@ module.exports = function (app, io) {
     var practice = require('../Practice/routes/product')(app, io);
     var upload = require('../Practice/routes/multiImage')(app, io);
     var form = require('../Practice/routes/form')(app, io);
+    var role = require('../routes/role/role')(app, io);
+    var skill = require('../routes/skill/skill')(app, io);
 
     app.get('/', function (req, res) {
       res.sendFile(path.join(__dirname, '../public/index.html'));

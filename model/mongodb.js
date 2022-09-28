@@ -16,6 +16,8 @@ var config_salary_schema = require('../Practice/schema/salary.schema');
 var config_mark_schema = require('../Practice/schema/mark.schema');
 var config_image_schema = require('../Practice/schema/image.schema');
 var config_form_schema = require('../Practice/schema/form.schema');
+var config_role_schema = require('../schema/role.schema');
+var config_skill_schema = require('../schema/skill.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
   timestamps: true,
@@ -78,6 +80,14 @@ var formSchema = mongoose.Schema(config_form_schema.FORM, {
   timestamps: true,
   versionKey: false,
 });
+var roleSchema = mongoose.Schema(config_role_schema.ROLE, {
+  timestamps: true,
+  versionKey: false,
+});
+var skillSchema = mongoose.Schema(config_skill_schema.SKILL, {
+  timestamps: true,
+  versionKey: false,
+});
 
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -102,6 +112,8 @@ var salary = mongoose.model('salary', salarySchema, 'salary');
 var mark = mongoose.model('mark', markSchema, 'mark');
 var multiImage = mongoose.model('multiImage', imageSchema, 'multiImage');
 var form = mongoose.model('form', formSchema, 'form');
+var role = mongoose.model('role', roleSchema, 'role');
+var skill = mongoose.model('skill', skillSchema, 'skill');
 
 module.exports = {
   admins: admins,
@@ -119,4 +131,6 @@ module.exports = {
   mark: mark,
   multiImage: multiImage,
   form: form,
+  role: role,
+  skill: skill,
 };
