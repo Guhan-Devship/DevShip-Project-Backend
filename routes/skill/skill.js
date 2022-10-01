@@ -8,13 +8,13 @@ module.exports = (app, io) => {
   try {
     var skill = require('../../controller/skill/skill')(app, io);
 
-    app.post('/newSkill', skill.createSkill);
+    app.post('/newSkill', ensureAuthorizedClient, skill.createSkill);
 
-    app.get('/getSkill', skill.getSkill);
-    app.get('/getSkillby/:id', skill.getskillById);
-    app.put('/updateSkill/:id', skill.updateskill);
+    app.get('/getSkill', ensureAuthorizedClient, skill.getSkill);
+    app.get('/getSkillby/:id', ensureAuthorizedClient, skill.getskillById);
+    app.put('/updateSkill/:id', ensureAuthorizedClient, skill.updateskill);
 
-    app.delete('/deleteSkill/:id', skill.deleteSkill);
+    app.delete('/deleteSkill/:id', ensureAuthorizedClient, skill.deleteSkill);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }

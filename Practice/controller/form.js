@@ -29,12 +29,14 @@ module.exports = (app, io) => {
     const surname = _.get(req.body, 'surname', '');
     const email = _.get(req.body, 'email', '');
     const agree_terms = _.get(req.body, 'agree_terms');
-    const gender = _.get(req.body, 'gender', '');
-    const role = _.get(req.body, 'role', '');
+    const genderValue = _.get(req.body, 'genderValue', [{ value: '', label: '' }]);
+    const roleValue = _.get(req.body, 'roleValue', [{ value: '', label: '' }]);
     const skill = _.get(req.body, 'skill', [{}]);
     const password = _.get(req.body, 'password', '');
     const confirmPassword = _.get(req.body, 'confirmPassword', '');
     const phone = _.get(req.body, 'phone', '');
+    const depositAmount = _.get(req.body, 'depositAmount', '');
+    const totalAmount = _.get(req.body, 'totalAmount', '');
     const createdby = req.params.loginId;
 
     const form = {
@@ -44,9 +46,11 @@ module.exports = (app, io) => {
       password,
       agree_terms,
       phone,
-      gender,
+      depositAmount,
+      totalAmount,
+      genderValue,
       skill,
-      role,
+      roleValue,
       createdby,
     };
     if (req.body.password === req.body.confirmPassword) {
@@ -116,18 +120,24 @@ module.exports = (app, io) => {
     try {
       const first_name = _.get(req.body, 'first_name', '');
       const surname = _.get(req.body, 'surname', '');
-      const gender = _.get(req.body, 'gender', '');
-      const role = _.get(req.body, 'role', '');
+      const genderValue = _.get(req.body, 'genderValue', [{}]);
+      const roleValue = _.get(req.body, 'roleValue', [{}]);
+      const skill = _.get(req.body, 'skill', [{}]);
       const email = _.get(req.body, 'email', '');
       const phone = _.get(req.body, 'phone', '');
+      const depositAmount = _.get(req.body, 'depositAmount', '');
+      const totalAmount = _.get(req.body, 'totalAmount', '');
 
       const formList = {
         first_name,
         surname,
-        gender,
-        role,
+        genderValue,
+        roleValue,
+        skill,
         email,
         phone,
+        depositAmount,
+        totalAmount,
       };
       let update = await UpdateOneDocument('form', { _id: req.params.id }, formList);
       if (update) {

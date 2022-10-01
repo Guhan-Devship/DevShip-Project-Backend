@@ -8,13 +8,13 @@ module.exports = (app, io) => {
   try {
     var role = require('../../controller/role/role')(app, io);
 
-    app.post('/newRole', role.createRole);
+    app.post('/newRole', ensureAuthorizedClient, role.createRole);
 
-    app.get('/getRole', role.getRole);
-    app.get('/getRoleby/:id', role.getroleById);
-    app.put('/updateRole/:id', role.updateRole);
+    app.get('/getRole', ensureAuthorizedClient, role.getRole);
+    app.get('/getRoleby/:id', ensureAuthorizedClient, role.getroleById);
+    app.put('/updateRole/:id', ensureAuthorizedClient, role.updateRole);
 
-    app.delete('/deleteRole/:id', role.deleteRole);
+    app.delete('/deleteRole/:id', ensureAuthorizedClient, role.deleteRole);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }

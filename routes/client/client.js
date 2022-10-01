@@ -22,7 +22,7 @@ module.exports = (app, io) => {
     app.get('/all/user', ensureAuthorizedClient, client.getAllUser);
     app.delete('/deleteUser/:id', client.deleteUser);
     app.post('/removeImage/:id', client.removePhoto);
-    app.post('/moveUser/:id', client.revertById);
+    app.post('/moveUser/:id', ensureAuthorizedClient, client.revertById);
     app.get('/getUser/:id', client.getUserbyId);
     app.put(
       '/updateUser/:id',
