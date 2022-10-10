@@ -12,6 +12,7 @@ var fs = require('fs');
 module.exports = function (app, io) {
   try {
     var admin = require('../routes/admin')(app, io);
+    var subadmin = require('../routes/subadmin/subadmin')(app, io);
     var client = require('../routes/client')(app, io);
     var category = require('../routes/category/category')(app, io);
     var product = require('../routes/product/product')(app, io);

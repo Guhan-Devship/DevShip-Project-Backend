@@ -2,7 +2,10 @@ const { check } = require('express-validator');
 const CONFIG = require('../../config/config.js');
 var library = require('../../model/library.js');
 var middlewares = require('../../model/middlewares.js');
-const { ensureAuthorizedClient } = require('../../model/security/ensureAuthorised.js');
+const {
+  ensureAuthorizedClient,
+  ensureAuthorizedAdmin,
+} = require('../../model/security/ensureAuthorised.js');
 
 module.exports = (app, io) => {
   try {
@@ -12,7 +15,7 @@ module.exports = (app, io) => {
       middlewares
         .commonUpload(CONFIG.DIRECTORY_CLIENT_CATEGORIES_PHOTO)
         .fields([{ name: 'image', maxCount: 5 }]),
-      ensureAuthorizedClient,
+      ensureAuthorizedAdmin,
       uploadFile.createMultiUpload
     );
     app.get('/getImages', uploadFile.getImages);

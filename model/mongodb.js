@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 
 var config_admin_schema = require('../schema/admins.schema.js');
+var config_subadmin_schema = require('../schema/subadmin.schema.js');
 var config_user_schema = require('../schema/client.schema.js');
 var config_category_schema = require('../schema/category.schema.js');
 var config_product_schema = require('../schema/product.schema.js');
@@ -21,6 +22,10 @@ var config_skill_schema = require('../schema/skill.schema');
 var config_pricing_schema = require('../schema/pricing.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
+  timestamps: true,
+  versionKey: false,
+});
+var subadminSchema = mongoose.Schema(config_subadmin_schema.SUBADMIN, {
   timestamps: true,
   versionKey: false,
 });
@@ -103,7 +108,15 @@ adminSchema.methods.validPassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
 
+subadminSchema.methods.generateHash = function (password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+subadminSchema.methods.validPassword = function (password) {
+  return bcrypt.compareSync(password, this.password);
+};
+
 var admins = mongoose.model('admins', adminSchema, 'admins');
+var subadmins = mongoose.model('subadmins', subadminSchema, 'subadmins');
 var client = mongoose.model('client', userSchema, 'client');
 var category = mongoose.model('category', categorySchema, 'category');
 var product = mongoose.model('product', productSchema, 'product');
@@ -124,6 +137,7 @@ var pricing = mongoose.model('pricing', pricingSchema, 'pricing');
 
 module.exports = {
   admins: admins,
+  subadmins: subadmins,
   client: client,
   category: category,
   product: product,

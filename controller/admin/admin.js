@@ -34,6 +34,236 @@ module.exports = (app, io) => {
   const push_notification = require('../../model/push_notification.js')(io);
   var router = {};
 
+  router.createadmin = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    let getUserEmail = await GetOneDocument('admins', { email: req.body.email }, {}, {});
+    // let getAdmin = await GetOneDocument('admins', { role: 'admin' }, {}, {});
+    if (getUserEmail) {
+      return res.json({ status: 0, message: 'Email already exists' });
+    }
+
+    const name = _.get(req.body, 'name', '');
+    const last_name = _.get(req.body, 'last_name', '');
+    const email = _.get(req.body, 'email', '');
+    const role = _.get(req.body, 'role', '');
+    const password = _.get(req.body, 'password', '');
+    const confirmPassword = _.get(req.body, 'confirmPassword', '');
+    const phone = _.get(req.body, 'phone', '');
+    const components = _.get(req.body, 'components');
+    const users = _.get(req.body, 'users');
+    const products = _.get(req.body, 'products');
+    const orders = _.get(req.body, 'orders');
+    const orderDelete = _.get(req.body, 'orderDelete');
+    const userView = _.get(req.body, 'userView');
+    const userEdit = _.get(req.body, 'userEdit');
+    const userDelete = _.get(req.body, 'userDelete');
+    const productDelete = _.get(req.body, 'productDelete');
+    const productView = _.get(req.body, 'productView');
+    const productEdit = _.get(req.body, 'productEdit');
+    const utilities = _.get(req.body, 'utilities');
+    const utilitiContact = _.get(req.body, 'utilitiContact');
+    const contactDelete = _.get(req.body, 'contactDelete');
+    const contactCreate = _.get(req.body, 'contactCreate');
+    const contactEdit = _.get(req.body, 'contactEdit');
+    const contactView = _.get(req.body, 'contactView');
+    const utilitiForm = _.get(req.body, 'utilitiForm');
+    const utilitiPricing = _.get(req.body, 'utilitiPricing');
+    const pricingCreate = _.get(req.body, 'pricingCreate');
+    const pricingEdit = _.get(req.body, 'pricingEdit');
+    const pricingDelete = _.get(req.body, 'pricingDelete');
+    const utilitiRole = _.get(req.body, 'utilitiRole');
+    const roleCreate = _.get(req.body, 'roleCreate');
+    const roleEdit = _.get(req.body, 'roleEdit');
+    const roleDelete = _.get(req.body, 'roleDelete');
+    const utilitiSkill = _.get(req.body, 'utilitiSkill');
+    const skillCreate = _.get(req.body, 'skillCreate');
+    const skillEdit = _.get(req.body, 'skillEdit');
+    const skillDelete = _.get(req.body, 'skillDelete');
+
+    const admin = {
+      email,
+      password,
+      phone,
+      name,
+      last_name,
+      role,
+      phone,
+      components,
+      users,
+      products,
+      orders,
+      orderDelete,
+      userView,
+      userEdit,
+      userDelete,
+      productDelete,
+      productView,
+      productEdit,
+      utilities,
+      utilitiContact,
+      contactDelete,
+      contactCreate,
+      contactEdit,
+      contactView,
+      utilitiForm,
+      utilitiPricing,
+      pricingCreate,
+      pricingEdit,
+      pricingDelete,
+      utilitiRole,
+      roleCreate,
+      roleEdit,
+      roleDelete,
+      utilitiSkill,
+      skillCreate,
+      skillEdit,
+      skillDelete,
+    };
+
+    if (req.body.password === req.body.confirmPassword) {
+      admin.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null);
+    } else {
+      return res.json({ status: 0, message: 'Password not match' });
+    }
+
+    let insert = await InsertDocument('admins', admin);
+
+    if (insert && insert._id) {
+      //   const messageUser = `You have successfully signed up to Kingdom Granites`;
+      // const messageAdmin = `New user ${insert.first_name} ${insert.surname} signed up`;
+      // const sender = insert._id;
+      // console.log(getAdmin);
+      // const receiver = getAdmin._id;
+
+      // await push_notification.addnotification(
+      //   sender,
+      //   receiver,
+      //   messageAdmin,
+      //   'client_register',
+      //   'admin'
+      // );
+      //   await push_notification.addnotification(
+      //     getAdmin._id,
+      //     messageUser,
+      //     "user_register",
+      //     options,
+      //     "user"
+      //   );
+      res.json({ status: 1, message: 'admin Created' });
+    } else {
+      res.json({ status: 0, message: 'Failed to create admin' });
+    }
+  };
+  router.getAdminbyId = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let getOne = await GetOneDocument('admins', { _id: req.params.id }, {}, {});
+      if (getOne) {
+        res.json(getOne);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  router.updateAdmin = async (req, res) => {
+    console.log(req.body);
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      const image = library.get_attachment(
+        req.files.image[0].destination,
+        req.files.image[0].filename
+      );
+      const name = _.get(req.body, 'name', '');
+      const last_name = _.get(req.body, 'last_name', '');
+      const email = _.get(req.body, 'email', '');
+      const phone = _.get(req.body, 'phone', '');
+      const components = _.get(req.body, 'components');
+      const users = _.get(req.body, 'users');
+      const products = _.get(req.body, 'products');
+      const orders = _.get(req.body, 'orders');
+      const orderDelete = _.get(req.body, 'orderDelete');
+      const userView = _.get(req.body, 'userView');
+      const userEdit = _.get(req.body, 'userEdit');
+      const userDelete = _.get(req.body, 'userDelete');
+      const productDelete = _.get(req.body, 'productDelete');
+      const productView = _.get(req.body, 'productView');
+      const productEdit = _.get(req.body, 'productEdit');
+      const utilities = _.get(req.body, 'utilities');
+      const utilitiContact = _.get(req.body, 'utilitiContact');
+      const contactDelete = _.get(req.body, 'contactDelete');
+      const contactCreate = _.get(req.body, 'contactCreate');
+      const contactEdit = _.get(req.body, 'contactEdit');
+      const contactView = _.get(req.body, 'contactView');
+      const utilitiForm = _.get(req.body, 'utilitiForm');
+      const utilitiPricing = _.get(req.body, 'utilitiPricing');
+      const pricingCreate = _.get(req.body, 'pricingCreate');
+      const pricingEdit = _.get(req.body, 'pricingEdit');
+      const pricingDelete = _.get(req.body, 'pricingDelete');
+      const utilitiRole = _.get(req.body, 'utilitiRole');
+      const roleCreate = _.get(req.body, 'roleCreate');
+      const roleEdit = _.get(req.body, 'roleEdit');
+      const roleDelete = _.get(req.body, 'roleDelete');
+      const utilitiSkill = _.get(req.body, 'utilitiSkill');
+      const skillCreate = _.get(req.body, 'skillCreate');
+      const skillEdit = _.get(req.body, 'skillEdit');
+      const skillDelete = _.get(req.body, 'skillDelete');
+
+      const admin = {
+        name,
+        last_name,
+        phone,
+        image,
+        email,
+        components,
+        users,
+        products,
+        orders,
+        orderDelete,
+        userView,
+        userEdit,
+        userDelete,
+        productDelete,
+        productView,
+        productEdit,
+        utilities,
+        utilitiContact,
+        contactDelete,
+        contactCreate,
+        contactEdit,
+        contactView,
+        utilitiForm,
+        utilitiPricing,
+        pricingCreate,
+        pricingEdit,
+        pricingDelete,
+        utilitiRole,
+        roleCreate,
+        roleEdit,
+        roleDelete,
+        utilitiSkill,
+        skillCreate,
+        skillEdit,
+        skillDelete,
+      };
+      let update = await UpdateOneDocument('admins', { _id: req.params.id }, admin);
+      if (update) {
+        res.json({ message: 'Updated' });
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
+
   let insertClientTraining = async (req) => {
     try {
       let { cartData, prefix, customer_ID, userID } = req;
@@ -100,10 +330,7 @@ module.exports = (app, io) => {
       let user = await GetOneDocument(
         'admins',
         {
-          $or: [
-            { email: email, status: 1 },
-            { username: email, status: 1 },
-          ],
+          $or: [{ email: email, status: 1 }],
         },
         {},
         {}
@@ -111,10 +338,7 @@ module.exports = (app, io) => {
       let subadmin = await GetOneDocument(
         'subadmins',
         {
-          $or: [
-            { email: email, status: 1 },
-            { username: email, status: 1 },
-          ],
+          $or: [{ email: email, status: 1 }],
         },
         {},
         {}

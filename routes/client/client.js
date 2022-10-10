@@ -19,7 +19,7 @@ var isObjectId = (n) => {
 module.exports = (app, io) => {
   try {
     var client = require('../../controller/client/client.js')(app, io);
-    app.get('/all/user', ensureAuthorizedClient, client.getAllUser);
+    app.get('/all/user', ensureAuthorizedAdmin, client.getAllUser);
     app.delete('/deleteUser/:id', client.deleteUser);
     app.post('/removeImage/:id', client.removePhoto);
     app.post('/moveUser/:id', ensureAuthorizedClient, client.revertById);
@@ -29,7 +29,6 @@ module.exports = (app, io) => {
       middlewares
         .commonUpload(CONFIG.DIRECTORY_CLIENT_CATEGORIES_PHOTO)
         .fields([{ name: 'image', maxCount: 1 }]),
-      ensureAuthorizedClient,
       client.updateUser
     );
     app.put('/updateAddress/:id', client.UpdateUserBillingAddress);

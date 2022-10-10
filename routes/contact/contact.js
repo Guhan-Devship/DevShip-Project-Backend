@@ -2,7 +2,10 @@ const { check } = require('express-validator');
 const CONFIG = require('../../config/config.js');
 var library = require('../../model/library.js');
 const middlewares = require('../../model/middlewares.js');
-const { ensureAuthorizedClient } = require('../../model/security/ensureAuthorised.js');
+const {
+  ensureAuthorizedClient,
+  ensureAuthorizedAdmin,
+} = require('../../model/security/ensureAuthorised.js');
 
 module.exports = (app, io) => {
   try {
@@ -18,15 +21,15 @@ module.exports = (app, io) => {
       ensureAuthorizedClient,
       contact.createContacts
     );
-    app.get('/allContact', ensureAuthorizedClient, contact.getContact);
-    app.get('/getContact/:id', ensureAuthorizedClient, contact.getContactById);
-    app.delete('/deleteContact/:id', ensureAuthorizedClient, contact.deleteContact);
+    app.get('/allContact', ensureAuthorizedAdmin, contact.getContact);
+    app.get('/getContact/:id', ensureAuthorizedAdmin, contact.getContactById);
+    app.delete('/deleteContact/:id', ensureAuthorizedAdmin, contact.deleteContact);
     app.delete(
       '/deleteContactAddress/:id/:userId',
-      ensureAuthorizedClient,
+      ensureAuthorizedAdmin,
       contact.deleteContactAddress
     );
-    app.put('/updateContact/:id', ensureAuthorizedClient, contact.updateContact);
+    app.put('/updateContact/:id', ensureAuthorizedAdmin, contact.updateContact);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }

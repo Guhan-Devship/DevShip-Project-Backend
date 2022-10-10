@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ADMIN_SCHEMA = {};
-ADMIN_SCHEMA.ADMIN = {
+var SUBADMIN_SCHEMA = {};
+SUBADMIN_SCHEMA.SUBADMIN = {
   email: { type: String, lowercase: true, index: { unique: true }, trim: true },
   password: String,
   image: { type: String, default: '' },
@@ -13,7 +13,6 @@ ADMIN_SCHEMA.ADMIN = {
   user_prefix: { type: String, default: '' },
   role: { type: String, default: '' },
   status: { type: Number, default: 1 },
-  phone: { type: String },
   components: { type: Boolean, default: false },
   users: { type: Boolean, default: false },
   products: { type: Boolean, default: false },
@@ -60,4 +59,4 @@ ADMIN_SCHEMA.ADMIN = {
   otp_timestamp: Number /* add 5 mins with current timestamp */,
   otp_verified: Number,
 };
-module.exports = ADMIN_SCHEMA;
+module.exports = SUBADMIN_SCHEMA;

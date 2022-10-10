@@ -10,6 +10,16 @@ module.exports = (app, io) => {
   try {
     var admin = require('../../controller/admin/admin.js')(app, io);
 
+    app.post('/new/admin', admin.createadmin);
+    app.get('/getadmin/:id', ensureAuthorizedAdmin, admin.getAdminbyId);
+    app.put(
+      '/updateadmin/:id',
+      middlewares
+        .commonUpload(CONFIG.DIRECTORY_CLIENT_CATEGORIES_PHOTO)
+        .fields([{ name: 'image', maxCount: 1 }]),
+      ensureAuthorizedAdmin,
+      admin.updateAdmin
+    );
     app.post(
       '/admin/login',
       [
