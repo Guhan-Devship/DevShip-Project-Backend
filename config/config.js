@@ -22,6 +22,7 @@ CONFIG.DIRECTORY_CLIENT_UNIFORM_PHOTO = './uploads/images/shop/uniform/photo/';
 CONFIG.DIRECTORY_CLIENT_LEAFLET_PHOTO = './uploads/images/shop/leaflet/';
 CONFIG.DIRECTORY_CLIENT_BUISNESSCARDS_PHOTO = './uploads/images/shop/buisness-cards/';
 CONFIG.DIRECTORY_CLIENT_CATEGORIES_PHOTO = './uploads/images/category/';
+CONFIG.DIRECTORY_ADMIN_UPLOAD_FILES = './uploads/pdf/';
 CONFIG.DIRECTORY_CLIENT_PRODUCTS_PHOTO = './uploads/images/shop/products/';
 CONFIG.DIRECTORY_CLIENT_UNIFORM_COMPANYLOGO = './uploads/images/shop/uniform/companylogo/';
 CONFIG.DIRECTORY_USER_PHOTO = './uploads/images/product/';

@@ -36,7 +36,7 @@ var bulkexport = async (data, callback) => {
   try {
     let filename = data.file_name + Date.now();
     let fileType = data.format;
-    let filenamePath = `uploads/csv/employee/${filename}.${fileType}`;
+    let filenamePath = `uploads/csv/${filename}.${fileType}`;
     let count = data.limit;
     let initial_skip = data.skip;
     var exceldata = [];

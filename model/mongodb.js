@@ -20,6 +20,7 @@ var config_form_schema = require('../Practice/schema/form.schema');
 var config_role_schema = require('../schema/role.schema');
 var config_skill_schema = require('../schema/skill.schema');
 var config_pricing_schema = require('../schema/pricing.schema');
+var config_upload_schema = require('../Practice/schema/upload.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
   timestamps: true,
@@ -100,6 +101,11 @@ var pricingSchema = mongoose.Schema(config_pricing_schema.PRICING, {
   versionKey: false,
 });
 
+var uploadSchema = mongoose.Schema(config_upload_schema.UPLOAD, {
+  timestamps: true,
+  versionKey: false,
+});
+
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
@@ -134,6 +140,7 @@ var form = mongoose.model('form', formSchema, 'form');
 var role = mongoose.model('role', roleSchema, 'role');
 var skill = mongoose.model('skill', skillSchema, 'skill');
 var pricing = mongoose.model('pricing', pricingSchema, 'pricing');
+var uploads = mongoose.model('uploads', uploadSchema, 'uploads');
 
 module.exports = {
   admins: admins,
@@ -155,4 +162,5 @@ module.exports = {
   role: role,
   skill: skill,
   pricing: pricing,
+  uploads: uploads,
 };

@@ -199,6 +199,4 @@ module.exports = (io) => {
       console.log('Error occured in cron job - notifyClientToProvideFeedback --->>', error);
     }
   }
-
-
 };
