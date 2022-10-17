@@ -29,6 +29,7 @@ module.exports = function (app, io) {
     var skill = require('../routes/skill/skill')(app, io);
     var pricing = require('../routes/pricing/pricing')(app, io);
     var uploads = require('../Practice/routes/upload')(app, io);
+    var folder = require('../Practice/routes/folder')(app, io);
 
     app.get('/', function (req, res) {
       res.sendFile(path.join(__dirname, '../public/index.html'));

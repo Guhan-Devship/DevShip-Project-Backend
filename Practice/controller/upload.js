@@ -14,6 +14,8 @@ const {
 } = require('../../controller/db_adaptor/mongodb.js');
 const path = require('path');
 const library = require('../../model/library.js');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
 
 module.exports = (app, io) => {
   var router = {};
@@ -57,12 +59,12 @@ module.exports = (app, io) => {
     }
   };
   router.deleteUploadFile = async (req, res) => {
+    var data = {};
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     const files = _.get(req.body, 'files', '');
-    console.log(files);
     try {
       let remove = await UpdateOneDocument(
         'uploads',
@@ -70,10 +72,16 @@ module.exports = (app, io) => {
         { $pull: { files: files } },
         {}
       );
-      console.log(remove);
-      if (remove) {
-        res.json({ status: 1, message: 'Removed' });
-      }
+      unlinkAsync(files)
+        .then((resolved) => {
+          data.status = 1;
+          data.response = resolved;
+          data.message = res.json({ status: 1, message: 'Removed' });
+        })
+        .catch((error) => {
+          data.status = 0;
+          data.message = error;
+        });
     } catch (error) {
       res.send(error);
     }

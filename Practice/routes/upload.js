@@ -17,6 +17,7 @@ module.exports = (app, io) => {
         .fields([{ name: 'files', maxCount: 8 }]),
       uploadFile.createUpload
     );
+
     app.get('/getfile', uploadFile.getUploadFiles);
     app.post('/deleteFiles/:id', uploadFile.deleteUploadFile);
   } catch (error) {

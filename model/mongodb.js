@@ -21,6 +21,7 @@ var config_role_schema = require('../schema/role.schema');
 var config_skill_schema = require('../schema/skill.schema');
 var config_pricing_schema = require('../schema/pricing.schema');
 var config_upload_schema = require('../Practice/schema/upload.schema');
+var config_folder_schema = require('../Practice/schema/folder.schema');
 
 var adminSchema = mongoose.Schema(config_admin_schema.ADMIN, {
   timestamps: true,
@@ -105,6 +106,10 @@ var uploadSchema = mongoose.Schema(config_upload_schema.UPLOAD, {
   timestamps: true,
   versionKey: false,
 });
+var folderSchema = mongoose.Schema(config_folder_schema.FOLDER, {
+  timestamps: true,
+  versionKey: false,
+});
 
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -141,6 +146,7 @@ var role = mongoose.model('role', roleSchema, 'role');
 var skill = mongoose.model('skill', skillSchema, 'skill');
 var pricing = mongoose.model('pricing', pricingSchema, 'pricing');
 var uploads = mongoose.model('uploads', uploadSchema, 'uploads');
+var folder = mongoose.model('folder', folderSchema, 'folder');
 
 module.exports = {
   admins: admins,
@@ -163,4 +169,5 @@ module.exports = {
   skill: skill,
   pricing: pricing,
   uploads: uploads,
+  folder: folder,
 };
