@@ -42,10 +42,16 @@ module.exports = (app, io) => {
       ],
       client.login
     );
+    app.post('/login/client/:uuid', client.loginAsClient);
     app.post(
-      '/client/auth/login',
+      '/loginAsClient',
       [check('_id', library.capitalize('ID is required')).not().isEmpty()],
       client.loginAsClient
+    );
+    app.post(
+      '/request-client-login/:clientId',
+      [check('_id', library.capitalize('ID is required')).not().isEmpty()],
+      client.requestlogin
     );
     app.post(
       '/register',

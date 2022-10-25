@@ -153,5 +153,6 @@ USER_SCHEMA.USER = {
     },
     noOfBedrooms: Number,
   },
+  uuid: String,
 };
 module.exports = USER_SCHEMA;

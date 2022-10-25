@@ -17,6 +17,12 @@ module.exports = (app, io) => {
     app.get('/getallSuadmins', ensureAuthorizedAdmin, subadmin.getSubamins);
     app.put('/updatesubadmin/:id', ensureAuthorizedAdmin, subadmin.updateSubAdmin);
     app.delete('/deleteSubadmin/:id', ensureAuthorizedAdmin, subadmin.deleteSubadmin);
+    app.post(
+      '/request-subadmin-login/:subadminId',
+      [check('_id', library.capitalize('ID is required')).not().isEmpty()],
+      subadmin.requestloginSubadmin
+    );
+    app.post('/login/subadmin/:uuid', subadmin.loginAsSubadmin);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);
   }

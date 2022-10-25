@@ -15,10 +15,11 @@ module.exports = (app, io) => {
       middlewares
         .commonUpload(CONFIG.DIRECTORY_ADMIN_UPLOAD_FILES)
         .fields([{ name: 'files', maxCount: 8 }]),
+      ensureAuthorizedAdmin,
       uploadFile.createUpload
     );
 
-    app.get('/getfile', uploadFile.getUploadFiles);
+    app.get('/getfile', ensureAuthorizedAdmin, uploadFile.getUploadFiles);
     app.post('/deleteFiles/:id', uploadFile.deleteUploadFile);
   } catch (error) {
     console.log(`Error occured ${error}`, error.message);

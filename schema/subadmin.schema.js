@@ -58,5 +58,6 @@ SUBADMIN_SCHEMA.SUBADMIN = {
   otp: Number /* 6 digits */,
   otp_timestamp: Number /* add 5 mins with current timestamp */,
   otp_verified: Number,
+  uuid: String,
 };
 module.exports = SUBADMIN_SCHEMA;

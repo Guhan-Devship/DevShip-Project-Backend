@@ -9,9 +9,12 @@ const {
   DeleteOneDocument,
   GetOneDocument,
   UpdateOneDocument,
+  DeleteDocument,
 } = require('../../controller/db_adaptor/mongodb.js');
 const path = require('path');
 const library = require('../../model/library.js');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
 
 module.exports = (app, io) => {
   var router = {};
@@ -22,8 +25,10 @@ module.exports = (app, io) => {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     const folder_name = _.get(req.body, 'folder_name', '');
+    const mainFolderId = req.params.loginId;
     const folder = {
       folder_name,
+      mainFolderId,
     };
     let insert = await InsertDocument('folder', folder);
     if (insert && insert._id) {
@@ -33,13 +38,47 @@ module.exports = (app, io) => {
     }
   };
 
+  router.createSubFolder = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    const folder_name = _.get(req.body, 'folder_name', '');
+    const mainFolderId = req.params.id;
+    const folder = {
+      folder_name,
+      mainFolderId,
+    };
+    let insert = await InsertDocument('folder', folder);
+    if (insert && insert._id) {
+      res.json({ status: 1, message: 'Folder Created' });
+    } else {
+      res.json({ status: 0, message: 'Failed to create' });
+    }
+  };
+
+  router.getSubfolder = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let allFolder = await GetDocument('folder', { mainFolderId: req.params.id }, {}, {});
+      if (allFolder) {
+        res.send(allFolder);
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
+
   router.getfolder = async (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let allFolder = await GetDocument('folder', {}, {}, {});
+      let allFolder = await GetDocument('folder', { mainFolderId: req.params.loginId }, {}, {});
       if (allFolder) {
         res.send(allFolder);
       }
@@ -55,7 +94,23 @@ module.exports = (app, io) => {
     }
     try {
       let remove = await DeleteOneDocument('folder', { _id: req.params.id });
-      if (remove) {
+      let update = await DeleteDocument('uploads', { folderId: req.params.id });
+      if (remove && update) {
+        res.json({ status: 1, message: 'Deleted' });
+      }
+    } catch (error) {
+      res.send(error);
+    }
+  };
+  router.deleteSubFolder = async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
+    }
+    try {
+      let remove = await DeleteOneDocument('folder', { _id: req.params.id });
+      let update = await DeleteDocument('uploads', { folderId: req.params.id });
+      if (remove && update) {
         res.json({ status: 1, message: 'Deleted' });
       }
     } catch (error) {
@@ -68,7 +123,7 @@ module.exports = (app, io) => {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let folder = await GetOneDocument('folder', { _id: req.params.id }, {}, {});
+      let folder = await GetDocument('uploads', { folderId: req.params.id }, {}, {});
       if (folder) {
         res.send(folder);
       }
@@ -109,16 +164,14 @@ module.exports = (app, io) => {
       req.files.files.map((e) => {
         files.push(library.get_attachment(e.destination, e.filename));
       });
+      const folderId = req.params.id;
+      const multifiles = {
+        files,
+        folderId,
+      };
 
-      let insert = await UpdateOneDocument(
-        'folder',
-        { _id: req.params.id },
-        {
-          $push: { files: files },
-        }
-      );
-
-      if (insert) {
+      let insert = await InsertDocument('uploads', multifiles);
+      if (insert && insert._id) {
         res.json({ status: 1, message: 'Uploaded successfull' });
       } else {
         res.json({ status: 0, message: 'Failed to upload' });
@@ -134,8 +187,8 @@ module.exports = (app, io) => {
     const files = _.get(req.body, 'files', '');
     try {
       let remove = await UpdateOneDocument(
-        'folder',
-        { _id: req.params.id },
+        'uploads',
+        { folderId: req.params.id },
         { $pull: { files: files } },
         {}
       );

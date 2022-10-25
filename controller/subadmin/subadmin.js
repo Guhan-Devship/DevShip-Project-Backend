@@ -13,6 +13,8 @@ const {
 } = require('../../controller/db_adaptor/mongodb.js');
 const path = require('path');
 const library = require('../../model/library.js');
+const { v4: uuidv4 } = require('uuid');
+const { ObjectId } = require('../../model/common.js');
 
 module.exports = (app, io) => {
   var router = {};
@@ -180,6 +182,60 @@ module.exports = (app, io) => {
       }
     } catch (error) {
       res.send(error);
+    }
+  };
+
+  router.requestloginSubadmin = async (req, res) => {
+    try {
+      const { subadminId } = req.params;
+      const uuid = uuidv4();
+
+      const update = await UpdateOneDocument(
+        'subadmins',
+        { _id: ObjectId(subadminId) },
+        { uuid },
+        {}
+      );
+
+      if (update.nModified === 0) {
+        return res.json({ status: 0, message: 'Client not found' });
+      }
+
+      res.json({ status: 1, response: { uuid } });
+    } catch (error) {
+      console.log(error);
+      res.json({ Status: 0, message: 'Server Error' });
+    }
+  };
+
+  router.loginAsSubadmin = async (req, res) => {
+    try {
+      const { uuid } = req.params;
+
+      let user = await GetOneDocument('subadmins', { uuid }, {}, {});
+
+      if (user !== undefined && user !== null) {
+        await UpdateOneDocument('subadmins', { uuid }, { $unset: { uuid: '' } }, {});
+
+        library.jwtSign({ email: user.email }, (error, authToken) => {
+          if (error) {
+            res.json({ status: 0, response: 'Invalid Credentials' });
+          } else {
+            res.json({
+              status: 1,
+              authToken,
+              userId: user._id,
+              role: user.role,
+              message: 'Login Successfully',
+            });
+          }
+        });
+      } else {
+        res.json({ status: 0, response: 'Not Found' });
+      }
+    } catch (err) {
+      console.log('err in  /loginAsSubadmin-->', err);
+      res.json({ status: 0, message: 'Server Error' });
     }
   };
 

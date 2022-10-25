@@ -8,7 +8,7 @@ module.exports = (app, io) => {
   try {
     var cart = require('../../controller/cart/cart')(app, io);
 
-    app.post('/newCart', cart.createCart);
+    app.post('/newCart', ensureAuthorizedClient, cart.createCart);
     app.get('/allCart', ensureAuthorizedClient, cart.getCart);
     app.delete('/deleteCart/:id', ensureAuthorizedClient, cart.deleteCart);
     app.put('/updateCart/:id', cart.updateCart);

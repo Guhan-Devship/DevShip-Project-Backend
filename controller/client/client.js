@@ -26,6 +26,8 @@ const { promisify } = require('util');
 const send = require('../../model/mail.js');
 const unlinkAsync = promisify(fs.unlink);
 
+const { v4: uuidv4 } = require('uuid');
+
 const pdfoptions = {
   format: 'A4',
   orientation: 'portrait',
@@ -263,49 +265,50 @@ module.exports = (app, io) => {
   };
 
   router.loginAsClient = async (req, res) => {
-    var data = {};
-    let errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
-    }
     try {
-      let user = await GetOneDocument(
-        'client',
-        {
-          _id: ObjectId(req.body._id),
-        },
-        {},
-        {}
-      );
+      const { uuid } = req.params;
+
+      let user = await GetOneDocument('client', { uuid }, {}, {});
+
       if (user !== undefined && user !== null) {
-        library.jwtSign(
-          {
-            _id: user._id,
-          },
-          (error, authToken) => {
-            if (error) {
-              data.response = 'Invalid Credentials';
-              res.json(data);
-            } else {
-              data.status = 1;
-              data.response = {
-                authToken: authToken,
-                message: 'Login Successfully',
-              };
-              res.json(data);
-            }
+        await UpdateOneDocument('client', { uuid }, { $unset: { uuid: '' } }, {});
+
+        library.jwtSign({ _id: user._id }, (error, authToken) => {
+          if (error) {
+            res.json({ status: 0, response: 'Invalid Credentials' });
+          } else {
+            res.json({
+              status: 1,
+              authToken,
+              message: 'Login',
+              _id: user.id,
+            });
           }
-        );
+        });
       } else {
-        data.response = 'User Not Found';
-        res.json(data);
+        res.json({ status: 0, response: 'Not Found' });
       }
     } catch (err) {
-      data.status = 0;
-      console.log('err in  /client/auth/login -->', err);
-      data.message = library.capitalize('server error');
-      data.error = err;
-      res.json(data);
+      console.log('err in  /loginAsClient-->', err);
+      res.json({ status: 0, message: 'Server Error' });
+    }
+  };
+
+  router.requestlogin = async (req, res) => {
+    try {
+      const { clientId } = req.params;
+      const uuid = uuidv4();
+
+      const update = await UpdateOneDocument('client', { _id: ObjectId(clientId) }, { uuid }, {});
+
+      if (update.nModified === 0) {
+        return res.json({ status: 0, message: 'Client not found' });
+      }
+
+      res.json({ status: 1, response: { uuid } });
+    } catch (error) {
+      console.log(error);
+      res.json({ Status: 0, message: 'Server Error' });
     }
   };
 

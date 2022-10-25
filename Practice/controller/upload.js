@@ -32,8 +32,10 @@ module.exports = (app, io) => {
       req.files.files.map((e) => {
         files.push(library.get_attachment(e.destination, e.filename));
       });
+      const folderId = req.params.loginId;
       const multifiles = {
         files,
+        folderId,
       };
 
       let insert = await InsertDocument('uploads', multifiles);
@@ -50,7 +52,7 @@ module.exports = (app, io) => {
       return res.status(422).json({ status: 0, errors: errors.errors[0].msg });
     }
     try {
-      let allImages = await GetDocument('uploads', {}, {}, {});
+      let allImages = await GetDocument('uploads', { folderId: req.params.loginId }, {}, {});
       if (allImages) {
         res.send(allImages);
       }

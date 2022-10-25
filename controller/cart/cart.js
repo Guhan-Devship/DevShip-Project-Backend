@@ -42,7 +42,6 @@ module.exports = (app, io) => {
       quantity,
       createdby,
     };
-    console.log(createdby);
 
     let insert = await InsertDocument('cart', cart);
     if (insert) {
